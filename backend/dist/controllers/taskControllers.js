@@ -41,30 +41,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const taskController = __importStar(require("./controllers/taskControllers"));
-const initialzeTables_1 = require("./models/initialzeTables");
-const app = (0, express_1.default)();
-app.use(express_1.default.json());
-app.post('/tasks', taskController.createTask);
-app.get('/tasks', taskController.getTasks);
-app.get('/tasks/:id', taskController.getTaskById);
-app.put('/tasks/:id', taskController.updateTask);
-app.delete('/tasks/:id', taskController.deleteTask);
-app.get("/ping", (req, res) => {
-    res.send("pong");
-});
-app.listen(4000, () => __awaiter(void 0, void 0, void 0, function* () {
+exports.deleteTask = exports.updateTask = exports.getTaskById = exports.getTasks = exports.createTask = void 0;
+const taskService = __importStar(require("../service/taskService"));
+const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, initialzeTables_1.initializeTables)();
-        console.log('Tasks table ensured.');
-        console.log(`Server running on port ${4000}`);
+        const task = yield taskService.createTaskService(req.body);
+        res.status(201).json(task);
     }
     catch (err) {
-        console.error('DB table creation failed:', err);
+        res.status(500).json({ error: 'Failed to create task' });
     }
-}));
+});
+exports.createTask = createTask;
+const getTasks = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const tasks = yield taskService.getTasksService();
+        res.status(200).json(tasks);
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Failed to fetch tasks' });
+    }
+});
+exports.getTasks = getTasks;
+const getTaskById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const task = yield taskService.getTaskByIdService(Number(req.params.id));
+        res.status(200).json(task);
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Failed to fetch task' });
+    }
+});
+exports.getTaskById = getTaskById;
+const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const task = yield taskService.updateTaskService(Number(req.params.id), req.body);
+        res.status(200).json(task);
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Failed to update task' });
+    }
+});
+exports.updateTask = updateTask;
+const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield taskService.deleteTaskService(Number(req.params.id));
+        res.status(204).send();
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Failed to delete task' });
+    }
+});
+exports.deleteTask = deleteTask;

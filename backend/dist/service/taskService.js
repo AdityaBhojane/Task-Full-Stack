@@ -41,30 +41,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const taskController = __importStar(require("./controllers/taskControllers"));
-const initialzeTables_1 = require("./models/initialzeTables");
-const app = (0, express_1.default)();
-app.use(express_1.default.json());
-app.post('/tasks', taskController.createTask);
-app.get('/tasks', taskController.getTasks);
-app.get('/tasks/:id', taskController.getTaskById);
-app.put('/tasks/:id', taskController.updateTask);
-app.delete('/tasks/:id', taskController.deleteTask);
-app.get("/ping", (req, res) => {
-    res.send("pong");
+exports.deleteTaskService = exports.updateTaskService = exports.getTaskByIdService = exports.getTasksService = exports.createTaskService = void 0;
+const taskRepository = __importStar(require("../repository/taskRepository"));
+const createTaskService = (task) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield taskRepository.createTask(task);
 });
-app.listen(4000, () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield (0, initialzeTables_1.initializeTables)();
-        console.log('Tasks table ensured.');
-        console.log(`Server running on port ${4000}`);
-    }
-    catch (err) {
-        console.error('DB table creation failed:', err);
-    }
-}));
+exports.createTaskService = createTaskService;
+const getTasksService = () => __awaiter(void 0, void 0, void 0, function* () {
+    return yield taskRepository.getTasks();
+});
+exports.getTasksService = getTasksService;
+const getTaskByIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield taskRepository.getTaskById(id);
+});
+exports.getTaskByIdService = getTaskByIdService;
+const updateTaskService = (id, task) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield taskRepository.updateTask(id, task);
+});
+exports.updateTaskService = updateTaskService;
+const deleteTaskService = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield taskRepository.deleteTask(id);
+});
+exports.deleteTaskService = deleteTaskService;
