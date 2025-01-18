@@ -10,14 +10,6 @@ export const createTask = async (req: Request, res: Response) => {
   }
 };
 
-export const getTasks = async (_req: Request, res: Response) => {
-  try {
-    const tasks = await taskService.getTasksService();
-    res.status(200).json(tasks);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch tasks' });
-  }
-};
 
 export const getTaskById = async (req: Request, res: Response) => {
   try {

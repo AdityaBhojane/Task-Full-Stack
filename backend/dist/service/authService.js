@@ -41,46 +41,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTask = exports.updateTask = exports.getTaskById = exports.createTask = void 0;
-const taskService = __importStar(require("../service/taskService"));
-const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const task = yield taskService.createTaskService(req.body);
-        res.status(201).json(task);
-    }
-    catch (err) {
-        res.status(500).json({ error: 'Failed to create task' });
-    }
+exports.loginUser = exports.registerUser = void 0;
+const userRepository = __importStar(require("../repository/authRepository"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const registerUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const existingUser = yield userRepository.getUserByEmail(user.email);
+    if (existingUser)
+        throw new Error('User already exists');
+    const hashedPassword = yield bcrypt_1.default.hash(user.password, 10);
+    const newUser = yield userRepository.createUser(Object.assign(Object.assign({}, user), { password: hashedPassword }));
+    return newUser;
 });
-exports.createTask = createTask;
-const getTaskById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const task = yield taskService.getTaskByIdService(Number(req.params.id));
-        res.status(200).json(task);
-    }
-    catch (err) {
-        res.status(500).json({ error: 'Failed to fetch task' });
-    }
+exports.registerUser = registerUser;
+const loginUser = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield userRepository.getUserByEmail(email);
+    if (!user)
+        throw new Error('User not found');
+    const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
+    if (!isPasswordValid)
+        throw new Error('Invalid password');
+    const token = jsonwebtoken_1.default.sign({ id: user.id, email: user.email }, "abcd");
+    return { token, user };
 });
-exports.getTaskById = getTaskById;
-const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const task = yield taskService.updateTaskService(Number(req.params.id), req.body);
-        res.status(200).json(task);
-    }
-    catch (err) {
-        res.status(500).json({ error: 'Failed to update task' });
-    }
-});
-exports.updateTask = updateTask;
-const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield taskService.deleteTaskService(Number(req.params.id));
-        res.status(204).send();
-    }
-    catch (err) {
-        res.status(500).json({ error: 'Failed to delete task' });
-    }
-});
-exports.deleteTask = deleteTask;
+exports.loginUser = loginUser;

@@ -8,6 +8,7 @@ exports.createTaskTableQuery = `
     description TEXT,
     status VARCHAR(50) DEFAULT 'pending',
     isPinned BOOLEAN DEFAULT false,
+    creator_id REFERENCES users(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );

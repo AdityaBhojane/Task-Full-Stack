@@ -47,19 +47,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const taskController = __importStar(require("./controllers/taskControllers"));
+const authController = __importStar(require("./controllers/authController"));
 const initialzeTables_1 = require("./models/initialzeTables");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.post('/tasks', taskController.createTask);
-app.get('/tasks', taskController.getTasks);
 app.get('/tasks/:id', taskController.getTaskById);
 app.put('/tasks/:id', taskController.updateTask);
 app.delete('/tasks/:id', taskController.deleteTask);
+// Auth Routes
+app.post('/auth/register', authController.register);
+app.post('/auth/login', authController.login);
 app.get("/ping", (req, res) => {
     res.send("pong");
 });
 app.listen(4000, () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // await connectDB();
         yield (0, initialzeTables_1.initializeTables)();
         console.log('Tasks table ensured.');
         console.log(`Server running on port ${4000}`);

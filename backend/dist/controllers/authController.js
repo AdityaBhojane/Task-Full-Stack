@@ -42,45 +42,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTask = exports.updateTask = exports.getTaskById = exports.createTask = void 0;
-const taskService = __importStar(require("../service/taskService"));
-const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.login = exports.register = void 0;
+const authService = __importStar(require("../service/authService"));
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const task = yield taskService.createTaskService(req.body);
-        res.status(201).json(task);
+        const user = yield authService.registerUser(req.body);
+        res.status(201).json(user);
     }
     catch (err) {
-        res.status(500).json({ error: 'Failed to create task' });
+        res.status(400).json({ error: err.message });
     }
 });
-exports.createTask = createTask;
-const getTaskById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.register = register;
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const task = yield taskService.getTaskByIdService(Number(req.params.id));
-        res.status(200).json(task);
+        const { email, password } = req.body;
+        const { token, user } = yield authService.loginUser(email, password);
+        res.status(200).json({ token, user });
     }
     catch (err) {
-        res.status(500).json({ error: 'Failed to fetch task' });
+        res.status(400).json({ error: err.message });
     }
 });
-exports.getTaskById = getTaskById;
-const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const task = yield taskService.updateTaskService(Number(req.params.id), req.body);
-        res.status(200).json(task);
-    }
-    catch (err) {
-        res.status(500).json({ error: 'Failed to update task' });
-    }
-});
-exports.updateTask = updateTask;
-const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield taskService.deleteTaskService(Number(req.params.id));
-        res.status(204).send();
-    }
-    catch (err) {
-        res.status(500).json({ error: 'Failed to delete task' });
-    }
-});
-exports.deleteTask = deleteTask;
+exports.login = login;

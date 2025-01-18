@@ -4,16 +4,18 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
+import { IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface CardType {
-    id: number;
-    title: string;
-    description: string;
-    }
+  id: number;
+  title: string;
+  description: string;
+}
 
 
 
-function TaskCard({id,title,description}:CardType) {
+function TaskCard({ id, title, description }: CardType) {
   const [selectedCard, setSelectedCard] = React.useState(0);
   return (
     <Box
@@ -24,30 +26,35 @@ function TaskCard({id,title,description}:CardType) {
         gap: 2,
       }}
     >
-        <Card>
-          <CardActionArea
-            onClick={() => setSelectedCard(id)}
-            data-active={selectedCard === id ? '' : undefined}
-            sx={{
-              height: '100%',
-              '&[data-active]': {
-                backgroundColor: 'action.selected',
-                '&:hover': {
-                  backgroundColor: 'action.selectedHover',
-                },
+      <Card>
+        <CardActionArea
+          onClick={() => setSelectedCard(id)}
+          data-active={selectedCard === id ? '' : undefined}
+          sx={{
+            height: '100%',
+            '&[data-active]': {
+              backgroundColor: 'action.selected',
+              '&:hover': {
+                backgroundColor: 'action.selectedHover',
               },
-            }}
-          >
-            <CardContent sx={{ height: '100%' }} >
-              <Typography variant="h5" component="div" >
-                {title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {description}
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
+            },
+          }}
+        >
+          <CardContent sx={{ height: '100%' }} >
+            <Typography variant="h5" component="div" >
+              {title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {description}
+            </Typography>
+            <div className="absolute right-0 top-0">
+              <IconButton aria-label="delete">
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </CardContent>
+        </CardActionArea>
+      </Card>
     </Box>
   );
 }
